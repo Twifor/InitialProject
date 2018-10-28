@@ -5,14 +5,14 @@ public class Info {
     private int imageName;
     private int ID;
     private int type;
-    private int date;
+    private String date;
 
-    public Info(String name, int imageName, int type, int ID,int date) {
+    public Info(String name, int imageName, int type, int ID, String date) {
         this.imageName = imageName;
         this.name = name;
         this.type = type;
         this.ID = ID;
-        this.date=date;
+        this.date = date;
     }
 
     public String getName() {
@@ -31,7 +31,7 @@ public class Info {
         return ID;
     }
 
-    public int getDate() {
+    public String getDate() {
         return date;
     }
 }
