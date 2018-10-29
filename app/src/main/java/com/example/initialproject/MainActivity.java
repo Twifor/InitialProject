@@ -1,10 +1,13 @@
 package com.example.initialproject;
 
+import android.support.annotation.NonNull;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,15 +22,16 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private List<Info> myList = new ArrayList<>();
-    private boolean lock = false;
+    private List<MainRecyclerView> myList = new ArrayList<>();
+    private List<String> pageImageList = new ArrayList<>();
+    private boolean lock = true;
 
-    public void init() {
+    public void init(final String url) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 OkHttpClient client = new OkHttpClient();
-                Request request = new Request.Builder().url("https://news-at.zhihu.com/api/3/news/latest").build();
+                Request request = new Request.Builder().url(url).build();
                 Response response = null;
                 try {
                     response = client.newCall(request).execute();
@@ -53,12 +57,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 String title;
+                String date = null;
                 Info info;
+                List<Info> list = new ArrayList<>();
                 try {
                     JSONObject jsonObject = new JSONObject(str);
                     JSONArray jsonArray = new JSONArray(jsonObject.getString("stories"));
                     JSONArray array;
-                    String date = jsonObject.getString("date");
+                    date = jsonObject.getString("date");
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject object = jsonArray.getJSONObject(i);
                         int id = object.getInt("id");
@@ -66,21 +72,31 @@ public class MainActivity extends AppCompatActivity {
                         int type = object.getInt("type");
                         array = object.getJSONArray("images");
                         info = new Info(title, array.getString(0), type, id, date);
-                        if (!lock) myList.add(info);
-                        else if (info.getID() != myList.get(i).getID()) {
-                            myList.remove(i);
-                            myList.add(i, info);
-                        }
+                        list.add(info);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                RecyclerView recyclerView = findViewById(R.id.recyclerView);
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
-                recyclerView.setLayoutManager(linearLayoutManager);
-                InfoAdapter adapter = new InfoAdapter(myList);
-                recyclerView.setAdapter(adapter);
-                lock = true;
+                MainAdapter adapter = null;
+                if (lock) {
+                    for (int i = 0; i < 5; i++) pageImageList.add(list.get(i).getImageName());
+                    ViewPager viewPager = findViewById(R.id.viewPage);
+                    ViewPageAdapter viewPageAdapter = new ViewPageAdapter(MainActivity.this, pageImageList);
+                    viewPager.setAdapter(viewPageAdapter);
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
+                    RecyclerView recyclerView = findViewById(R.id.mainRecyclerView);
+                    MainRecyclerView mainRecyclerView = new MainRecyclerView("今日热闻", list);
+                    myList.add(mainRecyclerView);
+                    adapter = new MainAdapter(myList);
+                    recyclerView.setLayoutManager(linearLayoutManager);
+                    recyclerView.setAdapter(adapter);
+                    lock=false;
+                } else {
+                    MainRecyclerView mainRecyclerView = new MainRecyclerView(date, list);
+                    myList.add(mainRecyclerView);
+                    adapter.notifyDataSetChanged();
+                }
+
             }
         });
     }
@@ -94,10 +110,10 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                init();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-        init();
+        RecyclerView recyclerView = findViewById(R.id.mainRecyclerView);
+        init("https://news-at.zhihu.com/api/3/news/latest");
     }
 }
