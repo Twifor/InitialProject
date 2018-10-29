@@ -3,6 +3,7 @@ package com.example.initialproject;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,6 +25,9 @@ public class contentActivity extends AppCompatActivity {
     private int ID;
     private String responseData;
     private ImageView imageView;
+    private WebView webView;
+    private TextView textView;
+    private String title;
 
     public void init() {
         new Thread(new Runnable() {
@@ -57,9 +61,13 @@ public class contentActivity extends AppCompatActivity {
                     JSONObject object = new JSONObject(str);
                     JSONArray imageArray = object.getJSONArray("images");
                     imageView = findViewById(R.id.contentImageView);
-                    WebView webView = findViewById(R.id.webView);
+                    webView = findViewById(R.id.webView);
+                    textView = findViewById(R.id.textView);
+                    String content = object.getString("body");
+                    content = content.replace("<img", "<img style=max-width:100%;height:auto");
                     Glide.with(contentActivity.this).load(imageArray.getString(0)).into(imageView);
-                    webView.loadDataWithBaseURL(null, object.getString("body"), "text/html", "utf-8", null);
+                    webView.loadDataWithBaseURL(null, content, "text/html", "utf-8", null);
+                    textView.setText(title);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -73,6 +81,7 @@ public class contentActivity extends AppCompatActivity {
         setContentView(R.layout.contentlayout);
         Intent intent = getIntent();
         ID = intent.getIntExtra("id", 233);
+        title = intent.getStringExtra("title");
         init();
     }
 }

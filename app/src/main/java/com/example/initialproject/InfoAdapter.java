@@ -41,6 +41,7 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.viewHolder> {
             public void onClick(View v) {
                 Intent intent = new Intent(viewHolder.context, contentActivity.class);
                 intent.putExtra("id",info.getID());
+                intent.putExtra("title",info.getName());
                 viewHolder.context.startActivity(intent);
             }
         });

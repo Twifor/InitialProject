@@ -1,14 +1,9 @@
 package com.example.initialproject;
 
-import android.annotation.SuppressLint;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Info> myList = new ArrayList<>();
 
-    public void init(){
+    public void init() {
         new Thread(new Runnable() {
             @Override
             public void run() {
