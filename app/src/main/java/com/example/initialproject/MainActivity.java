@@ -1,5 +1,6 @@
 package com.example.initialproject;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     private List<Info> myList = new ArrayList<>();
+    private boolean lock = false;
 
     public void init() {
         new Thread(new Runnable() {
@@ -64,7 +66,11 @@ public class MainActivity extends AppCompatActivity {
                         int type = object.getInt("type");
                         array = object.getJSONArray("images");
                         info = new Info(title, array.getString(0), type, id, date);
-                        myList.add(info);
+                        if (!lock) myList.add(info);
+                        else if (info.getID() != myList.get(i).getID()) {
+                            myList.remove(i);
+                            myList.add(i, info);
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -74,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 recyclerView.setLayoutManager(linearLayoutManager);
                 InfoAdapter adapter = new InfoAdapter(myList);
                 recyclerView.setAdapter(adapter);
+                lock = true;
             }
         });
     }
@@ -82,6 +89,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainlayout);
+        final SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeLayout);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                init();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
         init();
     }
 }
