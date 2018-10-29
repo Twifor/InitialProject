@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Info> myList = new ArrayList<>();
 
-    public void init() throws IOException {
+    public void init(){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 assert response != null;
                 assert response.body() != null;
+
                 String responseData = null;
                 try {
                     responseData = response.body().string();
@@ -54,19 +55,20 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.d("Impor", str);
                 String title;
                 Info info;
                 try {
                     JSONObject jsonObject = new JSONObject(str);
                     JSONArray jsonArray = new JSONArray(jsonObject.getString("stories"));
+                    JSONArray array;
                     String date = jsonObject.getString("date");
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject object = jsonArray.getJSONObject(i);
                         int id = object.getInt("id");
                         title = object.getString("title");
                         int type = object.getInt("type");
-                        info = new Info(title, R.drawable.temp, type, id, date);
+                        array = object.getJSONArray("images");
+                        info = new Info(title, array.getString(0), type, id, date);
                         myList.add(info);
                     }
                 } catch (Exception e) {
@@ -84,12 +86,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("Impor", "The program is running");
         setContentView(R.layout.mainlayout);
-        try {
-            init();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        init();
     }
 }

@@ -1,12 +1,18 @@
 package com.example.initialproject;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -26,10 +32,18 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.viewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull viewHolder viewHolder, int i) {
-        Info info = myList.get(i);
-        viewHolder.imageView.setImageResource(info.getImageName());
+    public void onBindViewHolder(@NonNull final viewHolder viewHolder, final int i) {
+        final Info info = myList.get(i);
+        Glide.with(viewHolder.context).load(info.getImageName()).into(viewHolder.imageView);
         viewHolder.textView.setText(info.getName());
+        viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(viewHolder.context, contentActivity.class);
+                intent.putExtra("id",info.getID());
+                viewHolder.context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -38,14 +52,17 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.viewHolder> {
     }
 
     static class viewHolder extends RecyclerView.ViewHolder {
+        private Context context;
         private TextView textView;
         private ImageView imageView;
+        private CardView cardView;
 
         viewHolder(View view) {
             super(view);
             textView = view.findViewById(R.id.textView);
             imageView = view.findViewById(R.id.imageView);
-
+            context = view.getContext();
+            cardView = view.findViewById(R.id.cardView);
         }
     }
 }

@@ -2,13 +2,13 @@ package com.example.initialproject;
 
 public class Info {
     private String name;
-    private int imageName;
+    private String image;
     private int ID;
     private int type;
     private String date;
 
-    public Info(String name, int imageName, int type, int ID, String date) {
-        this.imageName = imageName;
+    public Info(String name, String imageName, int type, int ID, String date) {
+        this.image = imageName;
         this.name = name;
         this.type = type;
         this.ID = ID;
@@ -19,8 +19,8 @@ public class Info {
         return name;
     }
 
-    public int getImageName() {
-        return imageName;
+    public String getImageName() {
+        return image;
     }
 
     public int getType() {
