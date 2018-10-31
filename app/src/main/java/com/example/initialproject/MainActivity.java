@@ -1,5 +1,6 @@
 package com.example.initialproject;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -8,6 +9,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ScrollView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private List<MainRecyclerView> myList = new ArrayList<>();
     private List<String> pageImageList = new ArrayList<>();
     private boolean lock = true;
+    private MainAdapter adapter;
+    private MainRecyclerView recyclerView;
+    public String currentDate;
 
     public void init(final String url) {
         new Thread(new Runnable() {
@@ -77,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                MainAdapter adapter = null;
                 if (lock) {
                     for (int i = 0; i < 5; i++) pageImageList.add(list.get(i).getImageName());
                     ViewPager viewPager = findViewById(R.id.viewPage);
@@ -90,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                     adapter = new MainAdapter(myList);
                     recyclerView.setLayoutManager(linearLayoutManager);
                     recyclerView.setAdapter(adapter);
-                    lock=false;
+                    lock = false;
                 } else {
                     MainRecyclerView mainRecyclerView = new MainRecyclerView(date, list);
                     myList.add(mainRecyclerView);
@@ -101,10 +107,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.mainlayout);
+    @SuppressLint("ClickableViewAccessibility")
+    public void setLayout() {
         final SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeLayout);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -113,7 +117,30 @@ public class MainActivity extends AppCompatActivity {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-        RecyclerView recyclerView = findViewById(R.id.mainRecyclerView);
+        ViewPager viewPager = findViewById(R.id.viewPage);
+        viewPager.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_MOVE:
+                        swipeRefreshLayout.setEnabled(false);
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                        swipeRefreshLayout.setEnabled(true);
+                        break;
+                }
+                return false;
+            }
+        });
+        MyScrollView scrollView = findViewById(R.id.myScrollView);
+        scrollView.setMainActivity(this);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.mainlayout);
+        setLayout();
         init("https://news-at.zhihu.com/api/3/news/latest");
     }
 }
