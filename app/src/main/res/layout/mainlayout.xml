@@ -4,31 +4,39 @@
 <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/swipeLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/grey">
 
     <com.example.initialproject.MyScrollView
         android:id="@+id/myScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewPage"
                 android:layout_width="match_parent"
-                android:layout_height="200dp">
-            </android.support.v4.view.ViewPager>
+                android:layout_height="200dp"></android.support.v4.view.ViewPager>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/mainRecyclerView"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:background="@color/grey">
+                android:layout_height="wrap_content"
+                android:descendantFocusability="blocksDescendants">
 
-            </android.support.v7.widget.RecyclerView>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/mainRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/grey">
+
+                </android.support.v7.widget.RecyclerView>
+            </RelativeLayout>
         </LinearLayout>
     </com.example.initialproject.MyScrollView>
 </android.support.v4.widget.SwipeRefreshLayout>

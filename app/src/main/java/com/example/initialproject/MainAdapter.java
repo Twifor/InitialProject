@@ -10,32 +10,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.viewHolder> {
     private List<MainRecyclerView> list;
-
+    private List<InfoAdapter> adapterList = new ArrayList<>();
     public MainAdapter(List<MainRecyclerView> list) {
         this.list = list;
     }
 
     @NonNull
     @Override
-    public viewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public MainAdapter.viewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.main, viewGroup, false);
-        viewHolder holder = new viewHolder(view);
-        return holder;
+        return new MainAdapter.viewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull viewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull MainAdapter.viewHolder viewHolder, int i) {
+        Log.d("Impor", "onBind"+i);
         final MainRecyclerView mainRecyclerView = list.get(i);
         viewHolder.textView.setText(mainRecyclerView.getDate());
-        Log.d("Impor", "3");
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(viewHolder.context);
         viewHolder.recyclerView.setLayoutManager(linearLayoutManager);
-        InfoAdapter adapter = new InfoAdapter(mainRecyclerView.getList());
-        viewHolder.recyclerView.setAdapter(adapter);
+        if (adapterList.size() <= i) adapterList.add(new InfoAdapter(mainRecyclerView.getList()));
+        viewHolder.recyclerView.setAdapter(adapterList.get(i));
     }
 
     @Override

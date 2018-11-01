@@ -30,8 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private List<String> pageImageList = new ArrayList<>();
     private boolean lock = true;
     private MainAdapter adapter;
-    private MainRecyclerView recyclerView;
-    public String currentDate;
+    public String currentDate = "";
 
     public void init(final String url) {
         new Thread(new Runnable() {
@@ -72,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                     JSONArray jsonArray = new JSONArray(jsonObject.getString("stories"));
                     JSONArray array;
                     date = jsonObject.getString("date");
+                    if(currentDate.equals(date))return;
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject object = jsonArray.getJSONObject(i);
                         int id = object.getInt("id");
@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                currentDate = date;
                 if (lock) {
                     for (int i = 0; i < 5; i++) pageImageList.add(list.get(i).getImageName());
                     ViewPager viewPager = findViewById(R.id.viewPage);
@@ -102,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
                     myList.add(mainRecyclerView);
                     adapter.notifyDataSetChanged();
                 }
-
             }
         });
     }
