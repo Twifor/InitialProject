@@ -1,17 +1,15 @@
 package com.example.initialproject;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ScrollView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,11 +23,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
-
-    private List<MainRecyclerView> myList = new ArrayList<>();
-    private List<String> pageImageList = new ArrayList<>();
-    private boolean lock = true;
+    private List<Info> myList = new ArrayList<>();//主内容列表
+    private List<Info> topList = new ArrayList<>();//热门内容列表
     private MainAdapter adapter;
+    private boolean lock = true;
     public String currentDate = "";
 
     public void init(final String url) {
@@ -44,14 +41,15 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                assert response != null;
-                assert response.body() != null;
-
                 String responseData = null;
-                try {
-                    responseData = response.body().string();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (response != null) {
+                    try {
+                        if (response.body() != null) {
+                            responseData = response.body().string();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 show(responseData);
             }
@@ -64,43 +62,51 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 String title;
                 String date = null;
-                Info info;
-                List<Info> list = new ArrayList<>();
+                int id;
+                if(str==null){
+                    Toast.makeText(MainActivity.this, "没有网络 (≧ω≦)", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 try {
                     JSONObject jsonObject = new JSONObject(str);
                     JSONArray jsonArray = new JSONArray(jsonObject.getString("stories"));
                     JSONArray array;
                     date = jsonObject.getString("date");
-                    if(currentDate.equals(date))return;
+                    if (lock) {
+                        JSONArray jsonArray1 = new JSONArray(jsonObject.getString("top_stories"));
+                        for (int i = 0; i < 5; i++) {
+                            topList.add(new Info(jsonArray1.getJSONObject(i).getString("title"),
+                                    jsonArray1.getJSONObject(i).getString("image"),
+                                    jsonArray1.getJSONObject(i).getInt("id"),
+                                    date,
+                                    ItemType.CONTENT
+                            ));
+                        }
+                    }
+                    if (currentDate.equals(date)) return;
+                    myList.add(new Info("", "", 0, date, ItemType.DATE));
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject object = jsonArray.getJSONObject(i);
-                        int id = object.getInt("id");
+                        id = object.getInt("id");
                         title = object.getString("title");
-                        int type = object.getInt("type");
                         array = object.getJSONArray("images");
-                        info = new Info(title, array.getString(0), type, id, date);
-                        list.add(info);
+                        myList.add(new Info(title, array.getString(0), id, date, ItemType.CONTENT));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 currentDate = date;
                 if (lock) {
-                    for (int i = 0; i < 5; i++) pageImageList.add(list.get(i).getImageName());
                     ViewPager viewPager = findViewById(R.id.viewPage);
-                    ViewPageAdapter viewPageAdapter = new ViewPageAdapter(MainActivity.this, pageImageList);
+                    ViewPageAdapter viewPageAdapter = new ViewPageAdapter(MainActivity.this, topList);
                     viewPager.setAdapter(viewPageAdapter);
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
                     RecyclerView recyclerView = findViewById(R.id.mainRecyclerView);
-                    MainRecyclerView mainRecyclerView = new MainRecyclerView("今日热闻", list);
-                    myList.add(mainRecyclerView);
                     adapter = new MainAdapter(myList);
                     recyclerView.setLayoutManager(linearLayoutManager);
                     recyclerView.setAdapter(adapter);
                     lock = false;
                 } else {
-                    MainRecyclerView mainRecyclerView = new MainRecyclerView(date, list);
-                    myList.add(mainRecyclerView);
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -114,6 +120,10 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                lock = true;
+                myList.clear();
+                topList.clear();
+                init("https://news-at.zhihu.com/api/3/news/latest");
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -132,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        findViewById(R.id.mainRecyclerView).setNestedScrollingEnabled(false);
         MyScrollView scrollView = findViewById(R.id.myScrollView);
         scrollView.setMainActivity(this);
     }

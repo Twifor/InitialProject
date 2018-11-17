@@ -4,14 +4,14 @@ public class Info {
     private String name;
     private String image;
     private int ID;
-    private int type;
     private String date;
+    private ItemType itemType;
 
-    public Info(String name, String imageName, int type, int ID, String date) {
+    Info(String name, String imageName, int ID, String date, ItemType itemType) {
         this.image = imageName;
         this.name = name;
-        this.type = type;
         this.ID = ID;
+        this.itemType = itemType;
         this.date = date;
     }
 
@@ -19,12 +19,8 @@ public class Info {
         return name;
     }
 
-    public String getImageName() {
+    String getImageName() {
         return image;
-    }
-
-    public int getType() {
-        return type;
     }
 
     public int getID() {
@@ -33,5 +29,9 @@ public class Info {
 
     public String getDate() {
         return date;
+    }
+
+    public ItemType getType() {
+        return itemType;
     }
 }
