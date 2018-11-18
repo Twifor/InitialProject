@@ -1,4 +1,4 @@
-package com.example.initialproject;
+package com.example.initialproject.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,9 +9,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.example.initialproject.R;
+import com.example.initialproject.model.Info;
+import com.example.initialproject.view.ContentActivity;
 
 import java.util.List;
-
+//热门内容滑块适配器
 public class ViewPageAdapter extends PagerAdapter {
     private List<Info> list;
     private Context context;
@@ -32,9 +35,9 @@ public class ViewPageAdapter extends PagerAdapter {
         View view = View.inflate(context, R.layout.pagelayout, null);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {//监听点击时间
                 Intent intent = new Intent(context, ContentActivity.class);
-                intent.putExtra("id", list.get(position).getID());
+                intent.putExtra("id", list.get(position).getID());//开一个activity显示详情
                 intent.putExtra("title", list.get(position).getName());
                 context.startActivity(intent);
             }

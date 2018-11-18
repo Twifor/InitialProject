@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:background="@color/grey">
 
-    <com.example.initialproject.MyScrollView
+    <com.example.initialproject.view.MyScrollView
         android:id="@+id/myScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,5 +40,5 @@
                 </android.support.v7.widget.RecyclerView>
             </RelativeLayout>
         </LinearLayout>
-    </com.example.initialproject.MyScrollView>
+    </com.example.initialproject.view.MyScrollView>
 </android.support.v4.widget.SwipeRefreshLayout>
