@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class RequestModelImplement implements RequestModel {
+public class RequestModelImpl implements RequestModel {
 
     @Override
     public void getData(final RequestListener requestListener, final String url) {

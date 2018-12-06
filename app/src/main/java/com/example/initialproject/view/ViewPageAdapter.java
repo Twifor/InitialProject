@@ -7,19 +7,25 @@ import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.initialproject.R;
 import com.example.initialproject.model.Info;
-import com.example.initialproject.view.ContentActivity;
 
 import java.util.List;
+
 //热门内容滑块适配器
 public class ViewPageAdapter extends PagerAdapter {
     private List<Info> list;
     private Context context;
 
-    public ViewPageAdapter(Context context, List<Info> list) {
+    @Override
+    public int getItemPosition(@NonNull Object object) {
+        return POSITION_NONE;
+    }
+
+    ViewPageAdapter(Context context, List<Info> list) {
         this.context = context;
         this.list = list;
     }
@@ -43,6 +49,18 @@ public class ViewPageAdapter extends PagerAdapter {
             }
         });
         ImageView imageView = view.findViewById(R.id.pageImage);
+        TextView textView = view.findViewById(R.id.textView2);
+        textView.setText(list.get(position).getName());
+        View[] view0 = new View[5];
+        view0[0] = view.findViewById(R.id.view1);
+        view0[1] = view.findViewById(R.id.view2);
+        view0[2] = view.findViewById(R.id.view3);
+        view0[3] = view.findViewById(R.id.view4);
+        view0[4] = view.findViewById(R.id.view5);
+        for (int i = 0; i < 5; i++) {
+            if (i == position) view0[i].setBackgroundResource(R.drawable.dot_focused);
+            else view0[i].setBackgroundResource(R.drawable.dot_normal);
+        }
         Glide.with(context).load(list.get(position).getImageName()).into(imageView);
         container.addView(view);
         return view;

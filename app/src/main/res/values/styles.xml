@@ -7,5 +7,15 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    <style name="dot_style_normal">
+        <item name="android:layout_width">9dp</item>
+        <item name="android:layout_height">9dp</item>
+        <item name="android:background">@drawable/dot_normal</item>
 
+    </style>
+    <style name="dot_style_focused">
+        <item name="android:layout_width">9dp</item>
+        <item name="android:layout_height">9dp</item>
+        <item name="android:background">@drawable/dot_focused</item>
+    </style>
 </resources>

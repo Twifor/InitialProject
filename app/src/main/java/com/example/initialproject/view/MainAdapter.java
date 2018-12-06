@@ -15,16 +15,16 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.initialproject.R;
 import com.example.initialproject.model.Info;
-import com.example.initialproject.view.ContentActivity;
-import com.example.initialproject.view.ItemType;
 
+import java.util.ArrayList;
 import java.util.List;
+
 //主适配器,负责更新处理recyclerView
 public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Info> list;
 
     public MainAdapter(List<Info> list) {
-        this.list = list;
+        this.list=list;
     }
 
     @Override
@@ -51,17 +51,19 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         final Info info = list.get(i);
         if (viewHolder instanceof DateViewHolder) {
             String d = info.getDate();
-            ((DateViewHolder) viewHolder).textView.setText(d.substring(0, 4) + "年" + d.substring(4, 6) + "月" + d.substring(6, 8) + "日");
+            DateViewHolder holder = (DateViewHolder) viewHolder;
+            holder.textView.setText(d.substring(0, 4) + "年" + d.substring(4, 6) + "月" + d.substring(6, 8) + "日");
         } else if (viewHolder instanceof ItemViewHolder) {
-            Glide.with(((ItemViewHolder) viewHolder).context).load(info.getImageName()).into(((ItemViewHolder) viewHolder).imageView);
-            ((ItemViewHolder) viewHolder).textView.setText(info.getName());
-            ((ItemViewHolder) viewHolder).cardView.setOnClickListener(new View.OnClickListener() {
+            final ItemViewHolder itemViewHolder = (ItemViewHolder) viewHolder;
+            Glide.with(itemViewHolder.context).load(info.getImageName()).into(itemViewHolder.imageView);
+            itemViewHolder.textView.setText(info.getName());
+            itemViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(((ItemViewHolder) viewHolder).context, ContentActivity.class);
+                    Intent intent = new Intent(itemViewHolder.context, ContentActivity.class);
                     intent.putExtra("id", info.getID());
                     intent.putExtra("title", info.getName());
-                    ((ItemViewHolder) viewHolder).context.startActivity(intent);
+                    itemViewHolder.context.startActivity(intent);
                 }
             });
         }

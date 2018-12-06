@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.example.initialproject.R;
 import com.example.initialproject.model.Info;
-import com.example.initialproject.presenter.PresenterImplement;
+import com.example.initialproject.presenter.PresenterImpl;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,8 +26,9 @@ public class MainActivity extends AppCompatActivity implements com.example.initi
     private List<Info> myList = new ArrayList<>();//主内容列表
     private List<Info> topList = new ArrayList<>();//热门内容列表
     private MainAdapter adapter;//主内容recyclerView适配器
-    private boolean lock = true;//表明这是不是初始化，lock为true时将同时加载今日热闻，否则不会
-    PresenterImplement presenterImplement = new PresenterImplement(MainActivity.this);
+    private ViewPageAdapter viewPageAdapter;
+    private int status = 1;
+    PresenterImpl presenterImpl = new PresenterImpl(MainActivity.this);
     public String currentDate = "";//当前已加载的最早的日期
 
     @SuppressLint("ClickableViewAccessibility")
@@ -37,10 +38,10 @@ public class MainActivity extends AppCompatActivity implements com.example.initi
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {//设置下拉刷新
-                lock = true;//表示重新读取信息
                 myList.clear();//清空主列表
-                topList.clear();//清空今日热闻列表
-                presenterImplement.loadData("https://news-at.zhihu.com/api/3/news/latest");//重新读取今日的日报信息
+//                topList.clear();//清空今日热闻列表
+                status = 2;
+                presenterImpl.loadData("https://news-at.zhihu.com/api/3/news/latest");//重新读取今日的日报信息
                 swipeRefreshLayout.setRefreshing(false);//关闭加载动画
             }
         });
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements com.example.initi
                     case MotionEvent.ACTION_MOVE:
                         swipeRefreshLayout.setEnabled(false);//滑动时禁用下拉刷新
                         break;
+                    case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
                         swipeRefreshLayout.setEnabled(true);//不滑动时恢复下拉刷新
                         break;
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements com.example.initi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mainlayout);
         setLayout();//初始化各种控件
-        presenterImplement.loadData("https://news-at.zhihu.com/api/3/news/latest");
+        presenterImpl.loadData("https://news-at.zhihu.com/api/3/news/latest");
     }
 
     @Override
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements com.example.initi
         runOnUiThread(new Runnable() {//UI线程更新UI
             @Override
             public void run() {
-                if(data.equals("error")){
+                if (data.equals("error")) {
                     Toast.makeText(MainActivity.this, "没有网络 (≧ω≦)", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -90,9 +92,9 @@ public class MainActivity extends AppCompatActivity implements com.example.initi
                     JSONArray array;
                     date = jsonObject.getString("date");//读取日期
                     if (currentDate.equals(date)) return;//已经加载过的不重复加载
-                    if (lock) {//如果lock为true同时读取今日热闻数据
+                    if (status == 1 ) {
                         JSONArray jsonArray1 = new JSONArray(jsonObject.getString("top_stories"));
-                        for (int i = 0; i < 5; i++) {
+                        for (int i = 0; i < jsonArray1.length(); i++) {
                             topList.add(new Info(jsonArray1.getJSONObject(i).getString("title"),
                                     jsonArray1.getJSONObject(i).getString("image"),
                                     jsonArray1.getJSONObject(i).getInt("id"),
@@ -114,18 +116,22 @@ public class MainActivity extends AppCompatActivity implements com.example.initi
                     e.printStackTrace();
                 }
                 currentDate = date;//更新当前加载到的最早日期
-                if (lock) {//lock为true说明是首次加载，还要设置适配器信息，同时设置viewPage以显示今日热闻
-                    ViewPager viewPager = findViewById(R.id.viewPage);
-                    ViewPageAdapter viewPageAdapter = new ViewPageAdapter(MainActivity.this, topList);
-                    viewPager.setAdapter(viewPageAdapter);
+                if (status == 1) {
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
                     RecyclerView recyclerView = findViewById(R.id.mainRecyclerView);
                     adapter = new MainAdapter(myList);
                     recyclerView.setLayoutManager(linearLayoutManager);
                     recyclerView.setAdapter(adapter);
-                    lock = false;
-                } else {
+                    ViewPager viewPager = findViewById(R.id.viewPage);
+                    viewPageAdapter = new ViewPageAdapter(MainActivity.this, topList);
+                    viewPager.setAdapter(viewPageAdapter);
+                    status = 3;
+                } else if (status != 1) {
                     adapter.notifyDataSetChanged();//显示更多直接更新即可
+//                    if (status == 2) {
+//                        viewPageAdapter.notifyDataSetChanged();
+//                        status = 3;
+//                    }
                 }
             }
         });
