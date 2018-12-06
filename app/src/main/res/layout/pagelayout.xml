@@ -8,51 +8,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/pageImage"
-        android:orientation="vertical">
-
         <TextView
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:layout_alignBottom="@+id/pageImage"
             android:textColor="@color/white"
             android:textSize="25sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <View
-                android:id="@+id/view1"
-                android:layout_marginStart="170dp"
-                android:layout_marginEnd="6dp"
-                style="@style/dot_style_focused" />
-
-            <View
-                android:id="@+id/view2"
-                style="@style/dot_style_normal"
-                android:layout_marginEnd="6dp"/>
-
-            <View
-                android:id="@+id/view3"
-                style="@style/dot_style_normal"
-                android:layout_marginEnd="6dp"/>
-
-            <View
-                android:id="@+id/view4"
-                style="@style/dot_style_normal"
-                android:layout_marginEnd="6dp"/>
-
-            <View
-                android:id="@+id/view5"
-                style="@style/dot_style_normal"
-                android:layout_marginEnd="6dp"/>
-        </LinearLayout>
-    </LinearLayout>
 </RelativeLayout>

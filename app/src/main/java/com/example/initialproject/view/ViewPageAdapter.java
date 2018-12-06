@@ -51,16 +51,16 @@ public class ViewPageAdapter extends PagerAdapter {
         ImageView imageView = view.findViewById(R.id.pageImage);
         TextView textView = view.findViewById(R.id.textView2);
         textView.setText(list.get(position).getName());
-        View[] view0 = new View[5];
-        view0[0] = view.findViewById(R.id.view1);
-        view0[1] = view.findViewById(R.id.view2);
-        view0[2] = view.findViewById(R.id.view3);
-        view0[3] = view.findViewById(R.id.view4);
-        view0[4] = view.findViewById(R.id.view5);
-        for (int i = 0; i < 5; i++) {
-            if (i == position) view0[i].setBackgroundResource(R.drawable.dot_focused);
-            else view0[i].setBackgroundResource(R.drawable.dot_normal);
-        }
+//        View[] view0 = new View[5];
+//        view0[0] = container.findViewById(R.id.view1);
+//        view0[1] = container.findViewById(R.id.view2);
+//        view0[2] = container.findViewById(R.id.view3);
+//        view0[3] = container.findViewById(R.id.view4);
+//        view0[4] = container.findViewById(R.id.view5);
+//        for (int i = 0; i < 5; i++) {
+//            if (i == position) view0[i].setBackgroundResource(R.drawable.dot_focused);
+//            else view0[i].setBackgroundResource(R.drawable.dot_normal);
+//        }
         Glide.with(context).load(list.get(position).getImageName()).into(imageView);
         container.addView(view);
         return view;

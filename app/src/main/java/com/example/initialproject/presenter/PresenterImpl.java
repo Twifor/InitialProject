@@ -14,8 +14,8 @@ public class PresenterImpl implements Presenter, RequestListener {
     }
 
     @Override
-    public void loadData(String url) {
-        requestModelImpl.getData(PresenterImpl.this, url);
+    public void loadData(String url, int type) {
+        requestModelImpl.getData(PresenterImpl.this, url, type);
     }
 
     @Override

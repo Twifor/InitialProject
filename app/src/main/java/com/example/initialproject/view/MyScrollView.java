@@ -21,7 +21,7 @@ public class MyScrollView extends ScrollView {
     protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
         super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
         if (clampedY && scrollY > 0 && key) {//滑到底端时加载前一天日报
-            mainActivity.presenterImpl.loadData("https://news-at.zhihu.com/api/3/news/before/" + mainActivity.currentDate);
+            mainActivity.presenterImpl.loadData(mainActivity.currentDate, 2);
             key = false;
 //            Log.d("Impor", "add");
         } else if (clampedY && scrollY > 0) key = true;
