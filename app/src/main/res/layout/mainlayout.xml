@@ -33,7 +33,6 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_alignBottom="@id/viewPage">
-
                         <View
                             android:id="@+id/view1"
                             style="@style/dot_style_focused"
