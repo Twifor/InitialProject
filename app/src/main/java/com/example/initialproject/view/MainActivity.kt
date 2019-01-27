@@ -22,14 +22,14 @@ class  MainActivity : AppCompatActivity(), com.example.initialproject.view.MyVie
     private val myList = ArrayList<Info>()//主内容列表
     private val topList = ArrayList<Info>()//热门内容列表
     private var adapter: MainAdapter? = null//主内容recyclerView适配器
-    private var viewPageAdapter: ViewPageAdapter? = null
-    private var status = 1
-    var presenterImpl = PresenterImpl(this@MainActivity)
+    private var viewPageAdapter: ViewPageAdapter? = null//热门内容ViewPage适配器
+    private var status = 1//设置状态
+    var presenterImpl = PresenterImpl(this@MainActivity)//presenter，MVP使用
     var currentDate: String? = ""//当前已加载的最早的日期
 
     @SuppressLint("ClickableViewAccessibility")
-    fun setLayout() {
-        val swipeRefreshLayout = findViewById<SwipeRefreshLayout>(R.id.swipeLayout)
+    fun setLayout() {//初始化各种layout的函数
+        val swipeRefreshLayout = findViewById<SwipeRefreshLayout>(R.id.swipeLayout)//下拉刷新view
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent)//读取刷新控件布局
         swipeRefreshLayout.setOnRefreshListener {
             //设置下拉刷新
@@ -40,7 +40,7 @@ class  MainActivity : AppCompatActivity(), com.example.initialproject.view.MyVie
             swipeRefreshLayout.isRefreshing = false//关闭加载动画
         }
         val viewPager = findViewById<ViewPager>(R.id.viewPage)//读取滑动控件布局
-        viewPager.setOnTouchListener { v, event ->
+        viewPager.setOnTouchListener { _, event ->
             //设置滑动监听，防止与刷新控件冲突
             when (event.action) {
                 MotionEvent.ACTION_MOVE -> swipeRefreshLayout.isEnabled = false//滑动时禁用下拉刷新
@@ -48,7 +48,7 @@ class  MainActivity : AppCompatActivity(), com.example.initialproject.view.MyVie
             }
             false
         }
-        val view = arrayOfNulls<View>(5)
+        val view = arrayOfNulls<View>(5)//小圆点5个
         view[0] = findViewById(R.id.view1)
         view[1] = findViewById(R.id.view2)
         view[2] = findViewById(R.id.view3)
@@ -82,7 +82,7 @@ class  MainActivity : AppCompatActivity(), com.example.initialproject.view.MyVie
 
     override fun showData(data: String) {
         runOnUiThread {
-            if (data == "error") {
+            if (data == "error") {//相当于异常处理
                 Toast.makeText(this@MainActivity, "没有网络 (≧ω≦)", Toast.LENGTH_SHORT).show()
                 return@runOnUiThread
             }
@@ -135,7 +135,7 @@ class  MainActivity : AppCompatActivity(), com.example.initialproject.view.MyVie
                 else -> {
                     adapter!!.notifyDataSetChanged()//显示更多直接更新即可
                     if (status == 2) {
-                        viewPageAdapter!!.notifyDataSetChanged()
+                        viewPageAdapter?.notifyDataSetChanged()
                         status = 3
                     }
                 }

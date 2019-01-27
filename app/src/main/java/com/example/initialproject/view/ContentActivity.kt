@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.initialproject.R
+import kotlinx.coroutines.experimental.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -29,35 +30,30 @@ class ContentActivity : AppCompatActivity() {
     private var title: String? = null
 
     fun init() {
-        Thread(Runnable {
+        launch {
             val client = OkHttpClient()
             val request = Request.Builder().url("https://news-at.zhihu.com/api/3/news/$ID").build()
-            var response: Response? = null
+            val response: Response?
             try {
                 response = client.newCall(request).execute()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-
-            try {
                 if (response != null) {
                     if (response.body() != null) {
                         responseData = response.body()!!.string()
-                    }
-                }
+                        show(responseData)
+                    } else show(null)
+                } else show(null)
             } catch (e: IOException) {
                 e.printStackTrace()
+                show(null)
             }
-
-            show(responseData)
-        }).start()
+        }
     }
 
     fun show(str: String?) {
-        runOnUiThread(Runnable {
+        runOnUiThread {
             if (str == null) {
                 Toast.makeText(this@ContentActivity, "没有网络 (≧ω≦)", Toast.LENGTH_SHORT).show()
-                return@Runnable
+                return@runOnUiThread
             }
             try {
                 val `object` = JSONObject(str)
@@ -74,7 +70,8 @@ class ContentActivity : AppCompatActivity() {
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
-        })
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

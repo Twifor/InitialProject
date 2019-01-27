@@ -22,7 +22,7 @@ class MainAdapter(private val list: List<Info>) : RecyclerView.Adapter<RecyclerV
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): RecyclerView.ViewHolder {
-        var view: View
+        val view: View
         if (i == ItemType.DATE.ordinal) {
             view = LayoutInflater.from(viewGroup.context).inflate(R.layout.date, viewGroup, false)
             return DateViewHolder(view)
